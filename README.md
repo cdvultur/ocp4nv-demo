@@ -88,7 +88,7 @@ spec:
 EOF
 
 # Wait for CSV to be ready
-oc wait --for=condition=Succeeded csv -n openshift-nfd \
+oc wait --for=jsonpath='{.status.phase}'=Succeeded csv -n openshift-nfd \
   -l operators.coreos.com/nfd.openshift-nfd --timeout=600s
 
 # Verify NFD is running
@@ -127,7 +127,7 @@ spec:
 EOF
 
 # Wait for CSV
-oc wait --for=condition=Succeeded csv -n nvidia-gpu-operator \
+oc wait --for=jsonpath='{.status.phase}'=Succeeded csv -n nvidia-gpu-operator \
   -l operators.coreos.com/gpu-operator-certified.nvidia-gpu-operator --timeout=600s
 ```
 
@@ -412,7 +412,7 @@ cat /tmp/clusterpolicy-vm-passthrough.json | oc apply -f -
 
 # Wait for vfio-manager to be ready
 sleep 30
-oc get pods -n nvidia-gpu-operator -l app=nvidia-vfio-manager
+oc get pods -n nvidia-gpu-operator -l name=nvidia-vfio-manager
 ```
 
 #### 7b. Container Mode (for container workloads)
@@ -502,7 +502,7 @@ oc describe node ${NODE_NAME} | grep -A15 "Allocatable:"
 # - devices.kubevirt.io/iommufd: 0
 
 # Verify vfio-pci driver binding (vm-passthrough mode)
-VFIO_POD=$(oc get pods -n nvidia-gpu-operator -l app=nvidia-vfio-manager -o name | head -1)
+VFIO_POD=$(oc get pods -n nvidia-gpu-operator -l name=nvidia-vfio-manager -o name | head -1)
 oc logs ${VFIO_POD} -n nvidia-gpu-operator | grep nvgrace_gpu_vfio_pci
 
 # Verify NVIDIA driver (container mode)
@@ -883,8 +883,9 @@ Create a VM that has installed the nvidia-gpu-driver for Grace Hopper/Blackwell.
 # Extract GPU device name
 NODE_NAME=$(oc get nodes -l node-role.kubernetes.io/master --no-headers | awk '{print $1}')  # SNO
 # NODE_NAME=$(oc get nodes -l node-role.kubernetes.io/worker --no-headers | awk '{print $1}')  # Multi-node
+# NODE_NAME=<specific node in the cluster> # for specific node
 
-GPU_DEVICE_NAME=$(oc describe node ${NODE_NAME} | grep "nvidia.com/GB" | awk '{print $1}')
+GPU_DEVICE_NAME=$(oc describe node ${NODE_NAME} | grep "nvidia.com/G" | awk '{print $1}')
 echo "GPU Device: ${GPU_DEVICE_NAME}"
 
 # Patch VM with GPU configuration
@@ -1013,10 +1014,10 @@ The vfio-pci driver cannot be unbound while VMs have GPU devices attached.
 ### Driver Logs
 ```bash
 # vfio-manager logs (vm-passthrough)
-oc logs -n nvidia-gpu-operator -l app=nvidia-vfio-manager
+oc logs -n nvidia-gpu-operator -l name=nvidia-vfio-manager
 
 # Driver daemonset logs (container mode)
-oc logs -n nvidia-gpu-operator -l app=nvidia-driver-daemonset
+oc logs -n nvidia-gpu-operator -l name=nvidia-driver-daemonset
 ```
 
 ### MachineConfig Issues
