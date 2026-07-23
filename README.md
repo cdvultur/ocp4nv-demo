@@ -95,6 +95,18 @@ oc wait --for=jsonpath='{.status.phase}'=Succeeded csv -n openshift-nfd \
 oc get pods -n openshift-nfd
 ```
 
+Apply the nfd-instance
+```
+oc apply -f - <<'EOF'
+apiVersion: nfd.openshift.io/v1
+kind: NodeFeatureDiscovery
+metadata:
+  name: nfd-instance
+  namespace: openshift-nfd
+spec: {}
+EOF
+```
+
 ### 2. NVIDIA GPU Operator
 
 ```bash
@@ -133,7 +145,7 @@ oc wait --for=jsonpath='{.status.phase}'=Succeeded csv -n nvidia-gpu-operator \
 
 ### 3. Machine Configurations
 
-Apply MachineConfigs sequentially to avoid multiple reboots. Each MachineConfig triggers a node reboot.
+Each MachineConfig triggers a node reboot.
 
 **Note:** For SNO, target `master` pool. For multi-node, target `worker` pool.
 
