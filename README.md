@@ -894,7 +894,7 @@ Create a VM that has installed the nvidia-gpu-driver for Grace Hopper/Blackwell.
 ```bash
 # Extract GPU device name
 NODE_NAME=$(oc get nodes -l node-role.kubernetes.io/master --no-headers | awk '{print $1}')  # SNO
-# NODE_NAME=$(oc get nodes -l node-role.kubernetes.io/worker --no-headers | awk '{print $1}')  # Multi-node
+# NODE_NAME=$(oc get nodes -l 'node-role.kubernetes.io/worker,!node-role.kubernetes.io/control-plane' --no-headers | awk '{print $1}')  # Multi-node
 # NODE_NAME=<specific node in the cluster> # for specific node
 
 GPU_DEVICE_NAME=$(oc describe node ${NODE_NAME} | grep "nvidia.com/G" | awk '{print $1}')
@@ -931,6 +931,9 @@ oc patch vm gpu-test-vm -n gpu-test-vm --type=merge -p '{"spec":{"running":true}
 
 # Wait for VM to be ready
 oc wait vm gpu-test-vm -n gpu-test-vm --for condition=Ready --timeout=10m
+
+# Wait until ssh is available on the VM ( between 5-7 minutes )  
+virtctl ssh --namespace <test-vm_namespace> --username=redhat vm/<test-vm>
 ```
 
 #### 11c. Verify GPU in VM
