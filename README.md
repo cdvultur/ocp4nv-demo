@@ -96,7 +96,7 @@ oc get pods -n openshift-nfd
 ```
 
 Apply the nfd-instance
-```
+```bash
 oc apply -f - <<'EOF'
 apiVersion: nfd.openshift.io/v1
 kind: NodeFeatureDiscovery
