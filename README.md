@@ -527,6 +527,8 @@ Deploy OpenShift Virtualization (CNV) with AI Enablement (AIE) for GPU passthrou
 
 #### 9a. Install CNV Operator
 
+In case of deploying from nightly catalog, use the `channel: nightly-${CNV_VERSION}` instead of `stable`.
+
 ```bash
 # Check if CNV is available in current catalog
 oc get packagemanifests | grep kubevirt-hyperconverged
