@@ -254,6 +254,9 @@ spec:
       max-allowable-numa-nodes: "34"
 EOF
 
+# Wait resources creation
+sleep 10
+
 # Wait for MCP to update (reboot 3)
 oc wait mcp master --for condition=Updated --timeout=30m
 ```
