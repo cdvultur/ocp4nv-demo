@@ -199,6 +199,9 @@ spec:
     - hugepages=64000
 EOF
 
+# Wait resources creation
+sleep 10
+
 # Wait for MCP to update (reboot 2)
 oc wait mcp master --for condition=Updated --timeout=30m
 ```
