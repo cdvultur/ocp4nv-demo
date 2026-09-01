@@ -87,6 +87,9 @@ spec:
   sourceNamespace: openshift-marketplace
 EOF
 
+# Wait resources creation
+sleep 10
+
 # Wait for CSV to be ready
 oc wait --for=jsonpath='{.status.phase}'=Succeeded csv -n openshift-nfd \
   -l operators.coreos.com/nfd.openshift-nfd --timeout=600s
@@ -137,6 +140,9 @@ spec:
   source: certified-operators
   sourceNamespace: openshift-marketplace
 EOF
+
+# Wait resources creation
+sleep 10
 
 # Wait for CSV
 oc wait --for=jsonpath='{.status.phase}'=Succeeded csv -n nvidia-gpu-operator \
