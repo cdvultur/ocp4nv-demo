@@ -281,6 +281,9 @@ spec:
       max-allowable-numa-nodes: "34"
 EOF
 
+# Wait resources creation
+sleep 10
+
 # Wait for MCP to update
 oc wait mcp worker --for condition=Updated --timeout=30m
 ```
@@ -331,6 +334,9 @@ spec:
           - ${TARGET_NODE}
 EOF
 done
+
+# Wait resources creation
+sleep 5
 
 # Verify PVs
 oc get pv | grep manual-local
