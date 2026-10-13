@@ -106,7 +106,17 @@ kind: NodeFeatureDiscovery
 metadata:
   name: nfd-instance
   namespace: openshift-nfd
-spec: {}
+spec:
+  operand:
+    servicePort: 12000
+  workerConfig:
+    configData: |
+      core:
+        sleepInterval: 60s
+      sources:
+        pci:
+          deviceClassWhitelist: ["02", "03", "0b40", "12"]
+          deviceLabelFields: ["vendor"]
 EOF
 ```
 
